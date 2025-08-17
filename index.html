@@ -5,170 +5,251 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Code Splitter</title>
   <style>
-    /* Inter font import */
+    /*
+      =======================================================
+      CUSTOM CSS FOR THE VISUAL EXPERIENCE
+      =======================================================
+    */
+
+    /* CSS variables for a consistent theme */
+    :root {
+      --bg-color: #0b0c10;
+      --container-bg: rgba(18, 20, 26, 0.8);
+      --border-color: #374151;
+      --text-color: #e2e8f0;
+      --accent-color: #63d1f4; /* A light blue/cyan */
+      --secondary-accent: #a855f7; /* Purple */
+      --success-color: #22c55e;
+    }
+
+    /* Inter font import for modern look */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
-    /* General body and container styling */
+    /* Body and Canvas setup */
     body {
-      background-color: #111827; /* bg-gray-900 */
-      color: #D1D5DB; /* text-gray-200 */
+      background-color: var(--bg-color);
+      color: var(--text-color);
       font-family: 'Inter', sans-serif;
-      padding: 2rem;
+      padding: 0;
+      margin: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      margin: 0;
+      /* The overflow property was removed here to allow scrolling. */
+    }
+    
+    /* The main content container should have its own scrollbar if needed */
+    .container {
+      overflow-y: auto;
     }
 
-    /* Main application container */
+    /* The canvas for the background animation */
+    #background-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+
+    /* Main application container with glass effect */
     .container {
-      background-color: #1F2937; /* bg-gray-800 */
-      padding: 2rem;
-      border-radius: 1rem; /* rounded-2xl */
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+      background-color: var(--container-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 2.5rem 1.5rem; /* Mobile padding */
+      border-radius: 1.5rem; /* More rounded */
+      border: 1px solid var(--border-color);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
       width: 100%;
-      max-width: 56rem; /* max-w-4xl */
+      max-width: 64rem; /* Wider container */
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 2rem;
+      position: relative;
+      z-index: 1;
+      animation: container-glow 4s infinite alternate;
     }
 
-    /* Input and select element styling */
+    /* Media query for larger screens */
+    @media (min-width: 768px) {
+      .container {
+        padding: 3rem; /* Desktop padding */
+      }
+    }
+
+    /* Continuous pulsating glow for the container */
+    @keyframes container-glow {
+      from { box-shadow: 0 0 15px rgba(168, 85, 247, 0.5), 0 0 25px rgba(168, 85, 247, 0.3); }
+      to { box-shadow: 0 0 25px rgba(168, 85, 247, 0.8), 0 0 40px rgba(168, 85, 247, 0.5); }
+    }
+
+    /* Title with animated gradient text and glowing effect */
+    .title-glow {
+      font-size: 2rem; /* Mobile font size */
+      font-weight: 800;
+      background: linear-gradient(45deg, var(--accent-color), var(--secondary-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
+      animation: text-pulse 2s infinite alternate;
+      text-align: center;
+    }
+    
+    @media (min-width: 768px) {
+      .title-glow {
+        font-size: 2.75rem; /* Desktop font size */
+      }
+    }
+    
+    @keyframes text-pulse {
+      from { transform: scale(1); opacity: 0.9; }
+      to { transform: scale(1.02); opacity: 1; }
+    }
+
+    /* Input and select elements with pulsing borders on focus */
     textarea, input, select {
-      background-color: #111827; /* bg-gray-900 */
-      color: #E5E7EB; /* text-gray-300 */
-      padding: 1rem;
-      border-radius: 0.75rem; /* rounded-xl */
-      border: 1px solid #374151; /* border-gray-700 */
-      transition: all 0.3s ease-in-out;
+      background-color: rgba(0, 0, 0, 0.4);
+      color: var(--text-color);
+      padding: 1rem; /* Mobile padding */
+      border-radius: 1rem;
+      border: 1px solid var(--border-color);
+      transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
       width: 100%;
+    }
+    
+    @media (min-width: 768px) {
+      textarea, input, select {
+        padding: 1.25rem; /* Desktop padding */
+      }
     }
 
     textarea:focus, input:focus, select:focus {
       outline: none;
-      border-color: #8B5CF6; /* focus:border-purple-500 */
+      border-color: var(--accent-color);
+      box-shadow: 0 0 15px var(--accent-color);
     }
 
     textarea {
-      height: 20rem; /* h-80 */
+      height: 20rem; /* Mobile height */
       resize: vertical;
     }
 
-    /* Button styling */
+    @media (min-width: 768px) {
+      textarea {
+        height: 25rem; /* Desktop height */
+      }
+    }
+
+    /* Button styling with advanced effects */
     button {
-      font-weight: 700; /* font-bold */
-      padding: 0.75rem 1.5rem;
-      border-radius: 9999px; /* rounded-full */
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
-      transition: all 0.3s ease-in-out;
+      font-weight: 700;
+      padding: 1rem; /* Mobile padding */
+      border-radius: 9999px;
+      transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
       display: flex;
       align-items: center;
       justify-content: center;
       border: none;
       cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+      z-index: 1;
+    }
+    
+    @media (min-width: 768px) {
+      button {
+        padding: 1rem 2rem; /* Desktop padding */
+      }
     }
 
+    button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      transition: width 0.4s ease-out, height 0.4s ease-out;
+      transform: translate(-50%, -50%);
+      z-index: -1;
+    }
+    
+    button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    
     button:hover {
-      transform: scale(1.05);
+      transform: translateY(-5px);
+    }
+    
+    button:active {
+      transform: translateY(1px);
     }
 
     .btn-split {
-      background-color: #9333ea; /* bg-purple-600 */
-      color: #fff;
-    }
-    .btn-split:hover {
-      background-color: #7e22ce; /* hover:bg-purple-700 */
-    }
-
-    .btn-clear {
-      background-color: #374151; /* bg-gray-700 */
-      color: #fff;
-    }
-    .btn-clear:hover {
-      background-color: #4B5563; /* hover:bg-gray-600 */
+      background: linear-gradient(45deg, #a855f7, #63d1f4);
+      color: var(--text-color);
     }
     
+    .btn-clear {
+      background-color: #374151;
+      color: var(--text-color);
+    }
+    .btn-clear:hover {
+      background-color: #4B5563;
+    }
+
     .btn-copy-all, .btn-copy-single {
       background: none;
       box-shadow: none;
       padding: 0;
-      color: #9CA3AF; /* text-gray-400 */
+      color: #9CA3AF;
       font-weight: 400;
       transition: color 0.3s ease-in-out;
       transform: none;
     }
 
     .btn-copy-all:hover, .btn-copy-single:hover {
-      color: #8B5CF6; /* hover:text-purple-500 */
+      color: var(--accent-color);
       transform: none;
     }
-
-    /* Icons and text alignment */
-    .icon-text-container {
-      display: flex;
-      align-items: center;
-    }
-    .icon-text-container svg {
-      margin-right: 0.5rem;
-    }
-
-    /* Flexbox and Layout fixes */
+    
+    /* Layout classes */
     .flex-col { display: flex; flex-direction: column; }
     .flex-row { display: flex; flex-direction: row; }
     .justify-between { justify-content: space-between; }
     .items-center { align-items: center; }
     .gap-4 { gap: 1rem; }
-    
     .controls-container {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.5rem;
     }
-
     .action-buttons {
       display: flex;
-      gap: 0.5rem;
+      flex-direction: column; /* Stack buttons on mobile */
+      gap: 1rem;
       width: 100%;
     }
-
     .action-buttons button {
       flex: 1 1 0%;
     }
-
-    @media (min-width: 768px) {
-      .controls-container {
-        flex-direction: row;
-        align-items: flex-end;
-      }
-      .action-buttons {
-        width: auto;
-      }
-    }
-
-    /* Utility classes */
-    .text-4xl { font-size: 2.25rem; }
-    .text-2xl { font-size: 1.5rem; }
     .text-sm { font-size: 0.875rem; }
-    .font-extrabold { font-weight: 800; }
-    .font-semibold { font-weight: 600; }
-    .text-white { color: #fff; }
-    .text-gray-400 { color: #9CA3AF; }
-    .text-gray-500 { color: #6B7280; }
-    .mb-6 { margin-bottom: 1.5rem; }
-    .mb-4 { margin-bottom: 1rem; }
-    .mb-2 { margin-bottom: 0.5rem; }
-    .block { display: block; }
-    .w-full { width: 100%; }
-    .flex-1 { flex: 1 1 0%; }
     .hidden { display: none; }
     .relative { position: relative; }
     .fixed { position: fixed; }
     .bottom-8 { bottom: 2rem; }
     .left-1\/2 { left: 50%; }
     .-translate-x-1\/2 { transform: translateX(-50%); }
-    .bg-green-500 { background-color: #22c55e; }
+    .bg-green-500 { background-color: var(--success-color); }
     .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
     .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
     .whitespace-pre-wrap { white-space: pre-wrap; }
@@ -177,43 +258,68 @@
     .overflow-y-auto { overflow-y: auto; }
     .pr-2 { padding-right: 0.5rem; }
 
-    /* Keyframes for simple animation */
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+    /*
+      =======================================================
+      ANIMATIONS FOR CHUNKS AND NOTIFICATIONS
+      =======================================================
+    */
+
+    /* Notification animation */
+    @keyframes bounce-in {
+      from { transform: scale(0.5) translateX(-50%); opacity: 0; }
+      to { transform: scale(1) translateX(-50%); opacity: 1; }
     }
-    .animate-pulse {
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    .animate-bounce-in { animation: bounce-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+    /* Chunk reveal animation */
+    @keyframes materialize {
+      from { transform: translateY(50px) scale(0.95); opacity: 0; border-color: rgba(255,255,255,0.2); }
+      to { transform: translateY(0) scale(1); opacity: 1; border-color: var(--border-color); }
+    }
+    .chunk-animate {
+      animation: materialize 0.6s ease-out forwards;
     }
 
-    @keyframes bounce-in {
-      0% { transform: scale(0.5); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .animate-bounce-in {
-      animation: bounce-in 0.3s ease-out;
+    /*
+      =======================================================
+      RESPONSIVENESS
+      =======================================================
+    */
+    @media (min-width: 768px) {
+      .controls-container {
+        flex-direction: row;
+        align-items: flex-end;
+      }
+      .action-buttons {
+        flex-direction: row; /* Horizontal buttons on desktop */
+        width: auto;
+      }
+      .container {
+        padding: 3rem;
+      }
     }
   </style>
 </head>
 <body>
 
+  <!-- The HTML5 Canvas for the dynamic background animation -->
+  <canvas id="background-canvas"></canvas>
+
   <!-- Main Application Container -->
   <div class="container">
     <!-- Page Title -->
-    <h1 class="text-4xl font-extrabold text-white mb-6 animate-pulse">
-      Code Splitter Tool
-    </h1>
+    <h1 class="title-glow">Code Splitter</h1>
 
     <!-- Input area for the code -->
     <div class="flex-col gap-4">
       <label for="code-input" class="text-gray-400 flex-row justify-between items-center">
         <span class="icon-text-container">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="10" x2="14" y1="3" y2="21"/></svg>
-          Paste Your Code Here
+          Paste Your Code
         </span>
         <span id="char-count" class="text-sm text-gray-500">0 characters</span>
       </label>
-      <textarea id="code-input" placeholder="e.g., Paste your JavaScript, Python, or HTML code..."></textarea>
+      <textarea id="code-input" placeholder="Paste your code here..."></textarea>
     </div>
 
     <!-- Controls section -->
@@ -244,11 +350,11 @@
       <div class="action-buttons">
         <button id="clear-btn" class="btn-clear">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M21 16l-7 7-3-3"/><path d="M14 2h6l-7 7"/></svg>
-          <span class="ml-2">Clear</span>
+          Clear
         </button>
         <button id="split-btn" class="btn-split">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 20.5L12 17l3.5 3.5"/><path d="M12 17V3"/><path d="M15.5 3.5L12 7l-3.5-3.5"/></svg>
-          <span class="ml-2">Split</span>
+          Split
         </button>
       </div>
     </div>
@@ -295,6 +401,71 @@
     const chunksList = document.getElementById('chunks-list');
     const copyAllBtn = document.getElementById('copy-all-btn');
     const notification = document.getElementById('notification');
+
+    // Canvas animation variables
+    const canvas = document.getElementById('background-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    const particleCount = 200;
+
+    // Particle class for the background animation
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.color = `hsl(${Math.random() * 360}, 100%, 75%)`;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.size > 0.2) this.size -= 0.01;
+      }
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Function to initialize particles
+    const initParticles = () => {
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    };
+
+    // Main animation loop
+    const animate = () => {
+      ctx.fillStyle = 'rgba(11, 12, 16, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].size <= 0.2) {
+          particles.splice(i, 1);
+          particles.push(new Particle());
+        }
+      }
+      requestAnimationFrame(animate);
+    };
+
+    // Handle canvas resizing
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      initParticles();
+    };
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('load', () => {
+      resizeCanvas();
+      animate();
+    });
 
     // Function to show/hide notification
     const showNotification = () => {
@@ -368,13 +539,14 @@
         }
       }
 
-      // Display the chunks
+      // Display the chunks with animation
       chunksList.innerHTML = '';
       if (newChunks.length > 0) {
         chunksContainer.classList.remove('hidden');
         newChunks.forEach((chunk, index) => {
           const chunkDiv = document.createElement('div');
-          chunkDiv.className = 'bg-gray-900 p-4 rounded-xl border border-gray-700';
+          chunkDiv.className = 'bg-gray-900 p-4 rounded-xl border border-gray-700 chunk-animate';
+          chunkDiv.style.animationDelay = `${index * 0.1}s`; // Stagger the animation
           chunkDiv.innerHTML = `
             <div class="flex-row justify-between items-center mb-2">
               <span class="text-gray-500 text-sm">Chunk ${index + 1}</span>
