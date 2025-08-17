@@ -1,28 +1,64 @@
-Text Splitter
-This is a simple, web-based tool for programmers to split their code into smaller, manageable parts. This is particularly useful for preparing code to be analyzed by large language models (LLMs) which often have token or character limits.
+# Text Splitter
 
-Features
-Split by Characters: Break your code into chunks of a specified character count.
+A powerful, web-based tool designed to help programmers split their code into smaller, manageable chunks. Perfect for working with Large Language Models (LLMs) that have token or character limits, or for any situation where you need to break down large code files.
 
-Split by Lines: Split your code by a certain number of lines per chunk.
+## 🚀 Features
 
-Split by Custom Delimiter: Use a custom string (e.g., ---, }, class) to define where the code should be split.
+- **Multiple Split Methods**
+  - Split by Character Count
+  - Split by Line Count
+  - Split by Custom Delimiter
+- **Real-time Character Counter**
+- **One-Click Copy Functions**
+  - Copy individual chunks
+  - Copy all chunks at once
+- **Easy Reset** with clear functionality
 
-Live Character Counter: See the total character count of your code in real time.
+## 🎯 Why Use Text Splitter?
 
-Copy Chunks: Easily copy individual chunks or all chunks to your clipboard.
+- Prepare code for LLM analysis
+- Break down large files into digestible pieces
+- Share code snippets effectively
+- Maintain context while working with size limitations
 
-Clear Functionality: Reset all inputs with a single click.
+## 📝 Quick Start Guide
 
-How to Use
-Paste Your Code: Enter your code into the text area.
+1. **Input Your Code**
+   - Paste your code into the text area
+   - Watch the live character counter update
 
-Select Split Method: Choose whether you want to split by characters, lines, or a custom delimiter.
+2. **Choose Your Split Method**
+   - Characters: Enter maximum characters per chunk
+   - Lines: Specify number of lines per chunk
+   - Custom: Define your delimiter (e.g., ---, }, class)
 
-Set Chunk Size: Specify the maximum size for each chunk.
+3. **Generate Chunks**
+   - Click "Split" to create your code chunks
+   - Review the generated segments
 
-Split: Click the "Split" button to generate the code chunks.
+4. **Use Your Chunks**
+   - Copy individual chunks as needed
+   - Or copy all chunks at once
+   - Clear the input to start fresh
 
-Copy: Use the copy buttons to get the code chunks you need.
+## 💻 Examples
 
-This tool aims to simplify the process of breaking down large code files, making it easier to work with AI assistants, share snippets, or perform other tasks that benefit from smaller, self-contained code blocks.
+(Examples with screenshots will be added here, showing:
+- Input code and resulting splits
+- UI features in action
+- Different split methods)
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to:
+- Report bugs
+- Suggest new features
+- Submit pull requests
+
+## 📄 License
+
+[License information to be added]
+
+## 🔗 Contact
+
+[Contact information to be added]
